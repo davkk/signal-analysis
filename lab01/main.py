@@ -1,19 +1,29 @@
+# %% [markdown]
+"""
+# Signal analysis - lab 01
+### Dawid Karpiński, 8.03.2024 r.
+
+## Introduction
+"""
+
 # %%
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import scipy.signal as signal
-from matplotlib.transforms import blended_transform_factory
 
 # %%
 sample_rate, wave = scipy.io.wavfile.read("./chord.wav")
-wave = wave[int(8.6e4) :]
 
 # %%
+wave = wave[int(8.6e4) :]
 time = np.arange(wave.size) / sample_rate
 
-plt.tight_layout()
 plt.plot(time, wave)
+plt.title("Wave from 'chord.wav'")
+plt.xlabel("Time [s]")
+plt.ylabel("Amplitude")
+plt.tight_layout()
 plt.show()
 
 
@@ -30,7 +40,7 @@ spectrum_db = 10 * np.log10(np.abs(spectrum) + 1e-15)
 
 # %%
 peaks, _ = signal.find_peaks(spectrum_db, distance=100)
-peaks = peaks[np.argsort(spectrum_db[peaks])[-7:]]
+peaks = peaks[np.argsort(spectrum_db[peaks])[-11:]]
 
 # %%
 # range 8 * 12 = 39 + 57
@@ -50,10 +60,22 @@ tone_names = [
 ]
 
 # %%
-fig, ax = plt.subplots(ncols=1, nrows=1)
+plt.loglog(freqs, spectrum_db)
+plt.title("FFT spectrum")
+plt.xlabel(r"Frequency $f$ [Hz]")
+plt.ylabel(r"Power $X(f)$ [dB]")
+plt.tight_layout()
+plt.show()
+
+
+# %% [markdown]
+#
+
+# %%
+fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10, 4))
 
 ax.scatter(freqs[peaks], spectrum_db[peaks], c="orange")
-ax.loglog(freqs, spectrum_db)
+ax.semilogy(freqs, spectrum_db)
 
 for freq_peak, peak_value in zip(freqs[peaks], spectrum_db[peaks]):
     idx = np.abs(tone_freqs - freq_peak).argmin()
@@ -66,16 +88,14 @@ for freq_peak, peak_value in zip(freqs[peaks], spectrum_db[peaks]):
         verticalalignment="bottom",
     )
     ax.axvline(x=freq_peak, c="gray", alpha=0.5, linestyle="--")
-    ax.annotate(
-        f"{tone_freqs[idx]:.2f}",
-        xy=(freq_peak, 0),
-        xycoords=blended_transform_factory(ax.transData, ax.transAxes),
-        xytext=(0, -10),
-        textcoords="offset pixels",
-        horizontalalignment="center",
-        verticalalignment="top",
-        rotation=-45,
-    )
+
+ax.set_xticks(freqs[peaks])
+
+ax.set_xlim(-50 + sorted(freqs[peaks])[0], 50 + sorted(freqs[peaks])[-1])
+ax.set_ylim(40, 90)
 
 fig.tight_layout()
+ax.set_title("FFT spectrum with peaks")
+ax.set_xlabel(r"Frequency $f$ [Hz]")
+ax.set_ylabel(r"Power $X(f)$ [dB]")
 plt.show()

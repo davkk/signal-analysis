@@ -12,7 +12,12 @@ matplotlib = "^3.8.3"
 scipy = "^1.12.0"
 ipython = "^8.22.1"
 librosa = "^0.10.1"
+jupytext = "^1.16.1"
+jupyter = "^1.0.0"
+jupyter-collaboration = "^2.0.2"
 
+[tool.jupytext]
+formats = "ipynb,py:percent"
 
 [build-system]
 requires = ["poetry-core"]
