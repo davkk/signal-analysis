@@ -7,11 +7,9 @@ import scipy.signal as signal
 from sat.common import set_custom_pyplot_styles
 from sat.lab01.fourier import freqs, spectrum_db
 
-# %%
 peaks, _ = signal.find_peaks(spectrum_db, distance=100)
 peaks = peaks[np.argsort(spectrum_db[peaks])[-11:]]
 
-# %%
 # range 8 * 12 = 39 + 57
 min_note = -57
 max_note = 39
@@ -31,7 +29,7 @@ tone_names = [
 if __name__ == "__main__":
     set_custom_pyplot_styles()
 
-    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(10, 4))
+    fig, ax = plt.subplots(ncols=1, nrows=1, figsize=(14, 8))
 
     ax.scatter(freqs[peaks], spectrum_db[peaks], c="orange")
     ax.semilogy(freqs, spectrum_db)
@@ -53,9 +51,8 @@ if __name__ == "__main__":
     ax.set_xlim(-50 + sorted(freqs[peaks])[0], 50 + sorted(freqs[peaks])[-1])
     ax.set_ylim(40, 90)
 
-    ax.set_title("FFT spectrum with peaks")
-    ax.set_xlabel(r"Frequency $f$ [Hz]")
-    ax.set_ylabel(r"Power $X(f)$ [dB]")
+    ax.set_xlabel(r"Frequency [Hz]")
+    ax.set_ylabel(r"Power [dB]")
 
     fig.tight_layout()
     plt.savefig(Path(__file__).with_suffix(".pdf"))

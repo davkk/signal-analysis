@@ -20,9 +20,8 @@ if __name__ == "__main__":
 
     plt.loglog(freqs, spectrum_db)
 
-    plt.title("FFT spectrum")
-    plt.xlabel(r"Frequency $f$ [Hz]")
-    plt.ylabel(r"Power $X(f)$ [dB]")
+    plt.xlabel(r"Frequency [Hz]")
+    plt.ylabel(r"Power [dB]")
 
     plt.tight_layout()
     plt.savefig(Path(__file__).with_suffix(".pdf"))

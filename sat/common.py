@@ -7,7 +7,7 @@ def set_custom_pyplot_styles():
     MEDIUM_SIZE = 16
     BIGGER_SIZE = 22
 
-    plt.rcParams["figure.figsize"] = (9, 8)
+    plt.rcParams["figure.figsize"] = (10, 7)
     # plt.rcParams["figure.dpi"] = 200
     plt.rcParams["font.family"] = "serif"
     plt.rcParams["mathtext.fontset"] = "stix"
