@@ -62,33 +62,33 @@
 
 \section{Wave}
 
-The task in lab 01 involves determining the highest peaks in the spectrum of a sound file and identifying what guitar chord has been recorded.
+The task during lab 01 involves determining the highest peaks in the spectrum of a sound file and identifying what guitar chord has been recorded.
 
-The available file, \verb|chord.wav|, is a recording of a guitar playing some chord. The signal is a 44100 Hz sample rate and was cut to 4 seconds of data.
+The available file, \verb|chord.wav|, is a recording of a guitar playing some chord. The signal is a 44100 [Hz] sample rate and was cut to 4 seconds of data.
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={\textbf{Code snippet for loading the initial signal.}}]
 sample_rate, wave = scipy.io.wavfile.read("./data/chord.wav")
 time = np.arange(wave.size) / sample_rate
 \end{lstlisting}
 
 \begin{figure}[ht!]
     \centering
-    \caption{\textbf{Wave from 'chord.wav'}}
+    \caption{\textbf{Wave from 'chord.wav'.}}
     \includegraphics[width=1\textwidth]{wave.pdf}
 \end{figure}
 
 \pagebreak
 \section{Fourier transform and the power spectrum}
 
-To determine the tones in the recorded accord, a Fourier transform was performed using the function \verb|np.fft.fft()|. The power spectrum of the signal was limited to the frequency range of 400 to 16\,000 [Hz], as suggested in the lab instructions.
+To determine the tones in the recorded accord, a Fourier transform was performed using the function \verb|np.fft.fft()|. The power spectrum of the signal was limited to the frequency range of 16 to 4000 [Hz], as suggested in the lab instructions.
 
 Furthermore, the power in dB units is obtained by using the following formula:
 $$
 P(x) = 10 \cdot \log(|H(x)|),
 $$
-where: $H(x)$ - Fourier transform of the initial signal
+where $H(x)$ is a Fourier transform of the initial signal
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={\textbf{Code snippet for calculating the power spectrum.}}]
 spectrum = np.fft.fft(wave)
 freqs = np.fft.fftfreq(wave.size, 1 / sample_rate)
 
@@ -101,15 +101,15 @@ spectrum_db = 10 * np.log10(np.abs(spectrum) + 1e-15)
 
 \begin{figure}[ht!]
     \centering
-    \caption{\textbf{Power spectrum of 'chord.wav'}}
+    \caption{\textbf{Power spectrum of 'chord.wav'.}}
     \includegraphics[width=1\textwidth]{fourier.pdf}
 \end{figure}
 
 
 \section{Peak analysis}
-By using the \verb|scipy.signal.find_peaks()| function, the highest peaks are found, and only 11 highest are analyzed.
+By using the \verb|scipy.signal.find_peaks()| function, the frequencies corresponding to the highest value of power are found, and only 11 highest are considered for further analysis.
 
-\begin{lstlisting}[caption={\textbf{Code snippet for identifying the semitones, based on the provided MATHLAB code.}}]
+\begin{lstlisting}[caption={\textbf{Code snippet for identifying the semitones, based on the provided MATLAB code.}}]
 peaks, _ = signal.find_peaks(spectrum_db, distance=100)
 peaks = peaks[np.argsort(spectrum_db[peaks])[-11:]]
 
@@ -131,11 +131,11 @@ tone_names = [
 
 \begin{figure}[ht!]
     \centering
-    \caption{\textbf{The highest peaks}}
+    \caption{\textbf{The highest peaks and the corresponding semitones.}}
     \includegraphics[width=1\textwidth]{peaks.pdf}
 \end{figure}
 
-The played cord is in the major key, hence one of the possibly played chords could be \textbf{E major}. It consists of E, G\# and B, which are showing as peaks in the above plot of the power spectrum.
+The played chord is in the major key, hence one of the possibly played chords could be \textbf{E major}. It consists of E, G\# and B, which are showing as peaks in the above plot of the power spectrum.
 
 
 \section{Conclusion}
