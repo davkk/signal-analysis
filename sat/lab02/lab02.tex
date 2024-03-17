@@ -1,0 +1,154 @@
+\documentclass[13pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[inkscapelatex=false]{svg}
+\usepackage{array, makecell}
+\usepackage{mhchem}
+\usepackage{tabularx}
+\usepackage{svg}
+\usepackage{braket}
+\usepackage{listings}
+\lstset{frame=single, language=Python}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[lf]{Baskervaldx} % lining figures
+\usepackage[bigdelims,vvarbb]{newtxmath} % math italic letters from nimbus Roman
+\usepackage[cal=boondoxo]{mathalfa} % mathcal from STIX, unslanted a bit
+\renewcommand*\oldstylenums[1]{\textosf{#1}}
+
+\usepackage{multicol}
+\usepackage{colortbl}
+\usepackage[Export]{adjustbox}
+\adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+\usepackage[colorlinks=true,linkcolor=red,citecolor=green]{hyperref}
+
+\textwidth=16cm
+\textheight=23cm
+\topmargin=-2cm
+\oddsidemargin=0cm
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.6em}
+\setlength{\jot}{12pt}
+\renewcommand{\arraystretch}{1.4}
+\renewcommand{\theadfont}{\bfseries}
+\newcommand{\todo}[1]{\textcolor{red}{TODO: #1}}
+
+
+\begin{document}
+\title{
+    \LARGE
+    \textbf{SATFD - lab 02 report}
+}
+\author{
+    \large
+    Dawid Karpiński, 18.03.2024 r.
+}
+\date{}
+\maketitle
+
+\section{Comparison of signals in time and frequency domain.}
+
+In figure \ref{fig:comparison} one can see the generate plots of different signals in time and frequency domain. The signals include an infinite signal, a rectangular window, a finite signal (result of multiplying the infinite signal with the rectangular window), a non-rectangular window, and a smoothed finite signal (result of multiplying the infinite signal with the non-rectangular window).
+
+The multiplication of two signals in the time domain results in the convolution of their frequency domain representations.
+
+\begin{lstlisting}[caption={\textbf{Code snippet for generating the signals.}}]
+N = 1000
+A = 5
+f = 10
+fs = 1000
+
+dt = 1 / fs
+time = dt * np.arange(N)
+
+infi = A * np.sin(2 * np.pi * f * time)
+window = time[np.abs(time) < 3 / f]
+rect = np.pad(np.full(window.size, 1), ((time.size - window.size) // 2))
+nonrect = scipy.signal.windows.gaussian(N, std=1 / f * N)
+\end{lstlisting}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{spectra_comparison.pdf}
+    \caption{Signals comparison.}
+    \label{fig:comparison}
+\end{figure}
+\clearpage
+
+
+\section{Sampling theorem and aliasing.}
+
+According to the sampling theorem, to perfectly reconstruct a signal, the sampling frequency $f_s$ must be at least twice the maximum frequency of the signal. This minimum sampling frequency is called the Nyquist frequency.
+
+The analysis has been performed on a Windows startup sound, with the original sample rate of $f_s=22.05$ [kHz]. The following plots in figure \ref{fig:sampling_thorem} show a gradually decimated signal, with the removal of every other sample, where the impact of sampling frequency on the frequency domain representation of the signal can be observed.
+
+At sampling frequencies above the Nyquist frequency, the frequency domain representation of the signal is accurate, and no aliasing occurs. However, as the sampling frequency decreases below the Nyquist frequency, the frequency domain representation becomes distorted, and aliasing occurs.
+
+\begin{lstlisting}[caption={\textbf{Code snippet for gradual decimation of the signal.}}]
+fss = fs // np.array([1, 1.5, 2, 5, 10])
+
+for curr_fs in fss:
+    samples = round(wave.size * curr_fs / fs)
+    rwave, rtime = signal.resample(wave, samples, t=time)
+\end{lstlisting}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{sampling_thorem.pdf}
+    \caption{Signals comparison. For better readability, only 0.1 [s] of the signal in the time domain is shown.}
+    \label{fig:sampling_thorem}
+\end{figure}
+\clearpage
+
+
+\section{Zero-padding the signal.}
+
+Zero padding is a technique used to increase the resolution of the frequency domain representation of a signal. The signal is therefore extended by adding zeros to its end, effectively increasing its length.
+
+\begin{lstlisting}[caption={Code snippet for adding the padding to infinite signal.}]
+infi = A * np.sin(2 * np.pi * f * time)
+infi = np.pad(infi, (0, infi.size * 2))
+time = np.arange(infi.size) / fs
+\end{lstlisting}
+
+\todo{something is wrong with the plot ?}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{zero_pad.pdf}
+    \caption{Zero padding.}
+    \label{fig:zero_padding}
+\end{figure}
+\pagebreak
+
+
+\section{Signal upsampling.}
+
+In upsampling, the signal is interpolated by inserting zeros between the samples, which results in a higher sampling rate.
+
+\begin{lstlisting}[caption={Code snippet for upsampling the signal.}]
+infi = A * np.sin(2 * np.pi * f * time)
+infi = np.insert(infi, np.arange(1, infi.size).repeat(1), 0)
+time = np.arange(0, infi.size) / fs
+\end{lstlisting}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{upsampling.pdf}
+    \caption{Zero padding.}
+    \label{fig:upsampling}
+\end{figure}
+
+
+\section{Conclusion.}
+
+The entire code for generating the data and plots can be found at:
+
+\url{https://github.com/davkk/signal-analysis/tree/main/sat/lab02}
+
+\end{document}

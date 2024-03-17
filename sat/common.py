@@ -1,4 +1,8 @@
+from typing import Tuple
+
 import matplotlib.pyplot as plt
+import numpy as np
+import numpy.typing as npt
 
 
 def set_custom_pyplot_styles():
@@ -8,7 +12,7 @@ def set_custom_pyplot_styles():
     BIGGER_SIZE = 22
 
     plt.rcParams["figure.figsize"] = (10, 7)
-    # plt.rcParams["figure.dpi"] = 200
+    plt.rcParams["figure.dpi"] = 200
     plt.rcParams["font.family"] = "serif"
     plt.rcParams["mathtext.fontset"] = "stix"
     plt.rcParams["xtick.direction"] = "in"
@@ -30,3 +34,17 @@ def set_custom_pyplot_styles():
     colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
     markers = ["*", "1", "+", "2", ".", "3"]
     return colors, markers
+
+
+def power_spec(
+    *, signal: npt.NDArray, sr: int
+) -> Tuple[npt.NDArray, npt.NDArray]:
+    spectrum = np.fft.fft(signal)
+
+    spectrum = 10 * np.log10(np.abs(spectrum) + 1e-15)
+    spectrum = np.roll(spectrum, spectrum.size // 2)
+
+    freqs = np.fft.fftfreq(signal.size, 1 / sr)
+    freqs = np.roll(freqs, freqs.size // 2)
+
+    return freqs, spectrum
