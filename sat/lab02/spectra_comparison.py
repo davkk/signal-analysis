@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 
-from sat.common import power_spec, set_custom_pyplot_styles
+from sat.common import power_spectrum, set_custom_pyplot_styles
 
 # jaki sygnal
 # wykres syg widmo mocy
@@ -20,7 +20,7 @@ dt = 1 / fs
 time = dt * np.arange(N)
 
 infi = A * np.sin(2 * np.pi * f * time)
-window = time[np.abs(time) < 3 / f]
+window = time[time < 5 / f]
 rect = np.pad(np.full(window.size, 1), ((time.size - window.size) // 2))
 nonrect = scipy.signal.windows.gaussian(N, std=1 / f * N)
 
@@ -40,24 +40,21 @@ if __name__ == "__main__":
 
     for idx, (title, signal) in enumerate(funcs.items()):
         subfig = subfigs[idx]
-        [time, spec] = subfig.subplots(nrows=1, ncols=2)
+        [left, right] = subfig.subplots(nrows=1, ncols=2)
 
         subfig.suptitle(title)
 
-        time.plot(time, signal)
-        time.set_xlabel("Time [s]")
-        time.set_ylabel("Amplitude [a.u.]")
+        left.plot(time, signal)
+        left.set_xlabel("Time [s]")
+        left.set_ylabel("Amplitude [a.u.]")
 
-        f, signal_fft = power_spec(
-            signal=signal,
-            sr=fs,
-        )
-        f_range = (f >= -50) & (f <= 50)
+        freqs, spectrum = power_spectrum(signal=signal, fs=fs)
+        f_range = (freqs >= -30) & (freqs <= 30)
 
-        spec.plot(f[f_range], signal_fft[f_range])
-        spec.set_xlabel("Frequency [Hz]")
-        spec.set_ylabel("Power [dB]")
-        spec.set_xticks(np.arange(-50, 51, 20))
+        right.plot(freqs[f_range], spectrum[f_range])
+        right.set_xlabel("Frequency [Hz]")
+        right.set_ylabel("Power [dB]")
+        right.set_xticks(np.arange(-30, 31, 10))
 
     plt.savefig(Path(__file__).with_suffix(".pdf"), dpi=300)
     # plt.show()

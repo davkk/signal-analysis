@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{color}
+\usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[inkscapelatex=false]{svg}
@@ -13,7 +14,14 @@
 \usepackage{svg}
 \usepackage{braket}
 \usepackage{listings}
-\lstset{frame=single, language=Python}
+\definecolor{commentsColor}{rgb}{0.497495, 0.497587, 0.497464}
+\definecolor{keywordsColor}{rgb}{0.000000, 0.000000, 0.635294}
+\definecolor{stringColor}{rgb}{0.558215, 0.000000, 0.135316}
+\lstset{
+    frame=single,
+    language=Python,
+    basicstyle=\ttfamily\vspace{1em},
+}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -47,14 +55,14 @@
 }
 \author{
     \large
-    Dawid Karpiński, 18.03.2024 r.
+    Dawid Karpiński, 18.03.2024
 }
 \date{}
 \maketitle
 
 \section{Comparison of signals in time and frequency domain.}
 
-In figure \ref{fig:comparison} one can see the generate plots of different signals in time and frequency domain. The signals include an infinite signal, a rectangular window, a finite signal (result of multiplying the infinite signal with the rectangular window), a non-rectangular window, and a smoothed finite signal (result of multiplying the infinite signal with the non-rectangular window).
+In figure \ref{fig:comparison} one can see the generated plots of different signals in time and frequency domain. The signals include an infinite signal, a rectangular window, a finite signal (result of multiplying the infinite signal with the rectangular window), a non-rectangular window, and a smoothed finite signal (result of multiplying the infinite signal with the non-rectangular window).
 
 The multiplication of two signals in the time domain results in the convolution of their frequency domain representations.
 
@@ -68,15 +76,18 @@ dt = 1 / fs
 time = dt * np.arange(N)
 
 infi = A * np.sin(2 * np.pi * f * time)
-window = time[np.abs(time) < 3 / f]
+window = time[time < 5 / f]
 rect = np.pad(np.full(window.size, 1), ((time.size - window.size) // 2))
 nonrect = scipy.signal.windows.gaussian(N, std=1 / f * N)
+
+spectrum = np.abs(spectrum) ** 2
+freqs = np.fft.fftfreq(signal.size, 1 / fs)
 \end{lstlisting}
 
 \begin{figure}[ht!]
     \centering
-    \includegraphics[width=\linewidth]{spectra_comparison.pdf}
-    \caption{Signals comparison.}
+    \includegraphics[width=0.9\linewidth]{spectra_comparison.pdf}
+    \caption{\textbf{Signals comparison.}}
     \label{fig:comparison}
 \end{figure}
 \clearpage
@@ -88,7 +99,7 @@ According to the sampling theorem, to perfectly reconstruct a signal, the sampli
 
 The analysis has been performed on a Windows startup sound, with the original sample rate of $f_s=22.05$ [kHz]. The following plots in figure \ref{fig:sampling_thorem} show a gradually decimated signal, with the removal of every other sample, where the impact of sampling frequency on the frequency domain representation of the signal can be observed.
 
-At sampling frequencies above the Nyquist frequency, the frequency domain representation of the signal is accurate, and no aliasing occurs. However, as the sampling frequency decreases below the Nyquist frequency, the frequency domain representation becomes distorted, and aliasing occurs.
+At each decimation, the range of signal's frequencies moved towards larger values. Additionally, some of the frequencies are lost, probably due to occurring aliasing.
 
 \begin{lstlisting}[caption={\textbf{Code snippet for gradual decimation of the signal.}}]
 fss = fs // np.array([1, 1.5, 2, 5, 10])
@@ -101,7 +112,7 @@ for curr_fs in fss:
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=\linewidth]{sampling_thorem.pdf}
-    \caption{Signals comparison. For better readability, only 0.1 [s] of the signal in the time domain is shown.}
+    \caption{\textbf{Signals comparison. For better readability, only 0.1 [s] of the signal in the time domain is shown.}}
     \label{fig:sampling_thorem}
 \end{figure}
 \clearpage
@@ -111,17 +122,15 @@ for curr_fs in fss:
 
 Zero padding is a technique used to increase the resolution of the frequency domain representation of a signal. The signal is therefore extended by adding zeros to its end, effectively increasing its length.
 
-\begin{lstlisting}[caption={Code snippet for adding the padding to infinite signal.}]
-infi = A * np.sin(2 * np.pi * f * time)
-infi = np.pad(infi, (0, infi.size * 2))
-time = np.arange(infi.size) / fs
+\begin{lstlisting}[caption={\textbf{Code snippet for adding the padding to infinite signal.}}]
+wave = np.pad(wave, (0, wave.size * 3))
+time = np.arange(wave.size) / fs
 \end{lstlisting}
 
-\todo{something is wrong with the plot ?}
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=\linewidth]{zero_pad.pdf}
-    \caption{Zero padding.}
+    \caption{\textbf{Zero padding.}}
     \label{fig:zero_padding}
 \end{figure}
 \pagebreak
@@ -131,21 +140,27 @@ time = np.arange(infi.size) / fs
 
 In upsampling, the signal is interpolated by inserting zeros between the samples, which results in a higher sampling rate.
 
-\begin{lstlisting}[caption={Code snippet for upsampling the signal.}]
-infi = A * np.sin(2 * np.pi * f * time)
-infi = np.insert(infi, np.arange(1, infi.size).repeat(1), 0)
-time = np.arange(0, infi.size) / fs
+\begin{lstlisting}[caption={\textbf{Code snippet for upsampling the signal.}}]
+upsampled = np.zeros(wave.size * 2)
+upsampled[::2] = wave
+
+new_fs = 2 * fs
+time = np.arange(wave.size * 2) / new_fs
 \end{lstlisting}
 
 \begin{figure}[ht!]
     \centering
     \includegraphics[width=\linewidth]{upsampling.pdf}
-    \caption{Zero padding.}
+    \caption{\textbf{Signal upsampling.}}
     \label{fig:upsampling}
 \end{figure}
 
+Moreover, after performing the upsampling, a new frequency appeared in the power spectrum.
+
 
 \section{Conclusion.}
+
+In conclusion, the task in lab 02 has explored various aspects of signal processing, including the comparison of windows applied to signals in both time and frequency domains, the application of the sampling theorem and its implications on aliasing, zero-padding techniques to enhance frequency resolution, and signal upsampling by zero interpolation.
 
 The entire code for generating the data and plots can be found at:
 

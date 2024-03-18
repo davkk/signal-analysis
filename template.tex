@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{color}
+\usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[inkscapelatex=false]{svg}
@@ -13,7 +14,14 @@
 \usepackage{svg}
 \usepackage{braket}
 \usepackage{listings}
-\lstset{frame=single, language=Python}
+\definecolor{commentsColor}{rgb}{0.497495, 0.497587, 0.497464}
+\definecolor{keywordsColor}{rgb}{0.000000, 0.000000, 0.635294}
+\definecolor{stringColor}{rgb}{0.558215, 0.000000, 0.135316}
+\lstset{
+    frame=single,
+    language=Python,
+    basicstyle=\ttfamily\vspace{1em},
+}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}

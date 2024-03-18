@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 from matplotlib import pyplot as plt
 
-from sat.common import power_spec, set_custom_pyplot_styles
+from sat.common import power_spectrum, set_custom_pyplot_styles
 from sat.lab02.spectra_comparison import A, f
 from sat.lab02.spectra_comparison import fs as fs
 from sat.lab02.spectra_comparison import infi as wave
@@ -15,27 +15,34 @@ if __name__ == "__main__":
     fig, [[ltop, rtop], [lbot, rbot]] = plt.subplots(ncols=2, nrows=2)
     fig.suptitle(f"Theoretical signal ${A}\\sin(2\\pi\\cdot{f}\\cdot t)$")
 
+    ltop.set_xlabel("Time [s]")
+    rtop.set_xlabel("Time [s]")
+    lbot.set_xlabel("Frequency [Hz]")
     rbot.set_xlabel("Frequency [Hz]")
+
     ltop.set_ylabel("Amplitude [a.u.]")
-    lbot.set_xlabel("Time [s]")
     lbot.set_ylabel("Power [dB]")
 
-    freq, power = power_spec(signal=wave, sr=fs)
+    freq, power = power_spectrum(signal=wave, fs=fs)
 
     ltop.plot(time, wave)
-    lbot.plot(freq[freq > 0], power[freq > 0])
+    lbot.plot(freq, power)
     ltop.set_title("Signal without zero-padding")
 
-    wave = np.insert(wave, np.arange(1, wave.size).repeat(1), 0)
-    time = np.arange(0, wave.size) / fs
+    upsampled = np.zeros(wave.size * 2)
+    upsampled[::2] = wave
+    time = np.arange(wave.size * 2) / fs / 2
 
-    freq, power = power_spec(signal=wave, sr=fs)
+    freq, power = power_spectrum(signal=upsampled, fs=fs * 2)
 
-    rtop.plot(time, wave)
-    rbot.plot(freq[freq > 0], power[freq > 0])
+    rtop.plot(time, upsampled)
+    rbot.plot(freq, power)
 
     rtop.set_title("Signal with zero-padding")
 
-    # fig.tight_layout()
+    lbot.set_xscale("log")
+    rbot.set_xscale("log")
+
+    fig.tight_layout()
     plt.savefig(Path(__file__).with_suffix(".pdf"))
     # plt.show()

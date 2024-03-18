@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy import signal
 
-from sat.common import power_spec, set_custom_pyplot_styles
+from sat.common import power_spectrum, set_custom_pyplot_styles
 from sat.lab02.wave import fs, time, wave
 
 fss = fs // np.array([1, 1.5, 2, 5, 10])
@@ -37,16 +37,17 @@ if __name__ == "__main__":
         left.set_ylabel("Amplitude [a.u.]")
         left.set_xlim(1, 1.1)
 
-        freq, power = power_spec(
+        freq, power = power_spectrum(
             signal=rwave,
-            sr=curr_fs,
+            fs=curr_fs,
         )
         positive = freq > 0
 
         right.plot(freq[positive], power[positive])
         right.set_xlabel("Frequency [Hz]")
         right.set_ylabel("Power [dB]")
-        right.set_yticks(np.arange(20, 81, 20))
+        right.set_xlim(1e1)
+        right.set_xscale("log")
 
     plt.savefig(Path(__file__).with_suffix(".pdf"), dpi=300)
     # plt.show()

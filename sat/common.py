@@ -36,15 +36,15 @@ def set_custom_pyplot_styles():
     return colors, markers
 
 
-def power_spec(
-    *, signal: npt.NDArray, sr: int
+def power_spectrum(
+    *, signal: npt.NDArray, fs: int
 ) -> Tuple[npt.NDArray, npt.NDArray]:
     spectrum = np.fft.fft(signal)
 
-    spectrum = 10 * np.log10(np.abs(spectrum) + 1e-15)
+    spectrum = np.abs(spectrum) ** 2
     spectrum = np.roll(spectrum, spectrum.size // 2)
 
-    freqs = np.fft.fftfreq(signal.size, 1 / sr)
+    freqs = np.fft.fftfreq(signal.size, 1 / fs)
     freqs = np.roll(freqs, freqs.size // 2)
 
     return freqs, spectrum
