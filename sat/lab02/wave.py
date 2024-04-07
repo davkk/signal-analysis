@@ -18,8 +18,7 @@ if __name__ == "__main__":
 
     trim = (time > 0.2) & (time < 3)
 
-    plt.plot(time[trim], wave[trim], ".-")
-    plt.title("Windows startup sound")
+    plt.plot(time[trim], wave[trim])
     plt.xlabel("Time [s]")
     plt.ylabel("Amplitude [a.u.]")
 

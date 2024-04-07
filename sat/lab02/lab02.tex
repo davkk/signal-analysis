@@ -97,7 +97,14 @@ freqs = np.fft.fftfreq(signal.size, 1 / fs)
 
 According to the sampling theorem, to perfectly reconstruct a signal, the sampling frequency $f_s$ must be at least twice the maximum frequency of the signal. This minimum sampling frequency is called the Nyquist frequency.
 
-The analysis has been performed on a Windows startup sound, with the original sample rate of $f_s=22.05$ [kHz]. The following plots in figure \ref{fig:sampling_thorem} show a gradually decimated signal, with the removal of every other sample, where the impact of sampling frequency on the frequency domain representation of the signal can be observed.
+The analysis has been performed on a Windows startup sound (figure \ref{fig:wave}), with the original sample rate of $f_s=22.05$ [kHz]. The following plots in figure \ref{fig:sampling_thorem} show a gradually decimated signal, with the removal of every other sample, where the impact of sampling frequency on the frequency domain representation of the signal can be observed.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\linewidth]{wave.pdf}
+    \caption{\textbf{Windows startup sound.}}
+    \label{fig:wave}
+\end{figure}
 
 At each decimation, the range of signal's frequencies moved towards larger values. Additionally, some of the frequencies are lost, probably due to occurring aliasing.
 
@@ -158,6 +165,7 @@ time = np.arange(wave.size * 2) / new_fs
 Moreover, after performing the upsampling, a new frequency appeared in the power spectrum.
 
 
+\pagebreak
 \section{Conclusion.}
 
 In conclusion, the task in lab 02 has explored various aspects of signal processing, including the comparison of windows applied to signals in both time and frequency domains, the application of the sampling theorem and its implications on aliasing, zero-padding techniques to enhance frequency resolution, and signal upsampling by zero interpolation.
