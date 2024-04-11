@@ -26,5 +26,5 @@ if __name__ == "__main__":
     right.set_ylabel("Frequency [Hz]")
 
     fig.tight_layout()
-    plt.savefig(Path(__file__).with_suffix(".pdf"))
+    plt.savefig(Path(__file__).with_suffix(".png"))
     # plt.show()

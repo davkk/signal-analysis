@@ -21,7 +21,7 @@ if __name__ == "__main__":
     fig, top, wv, stft = layout()
 
     top.plot(time, wave)
-    top.set_title("Two chirps changing in parallel")
+    top.set_title("Two chirps changing not in parallel")
     top.set_xlabel("Time [s]")
     top.set_ylabel("Amplitude [a. u.]")
 
@@ -36,5 +36,5 @@ if __name__ == "__main__":
     fig.suptitle(f"$\\text{{{nfft=}}}$, ${N=}$")
 
     fig.tight_layout()
-    plt.savefig(Path(__file__).with_suffix(".pdf"))
+    plt.savefig(Path(__file__).with_suffix(".png"))
     # plt.show()

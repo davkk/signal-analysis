@@ -20,8 +20,8 @@ if __name__ == "__main__":
             wave,
             fs=fs,
             window=("hamming"),
-            nperseg=nfft,
-            noverlap=nfft // 2,
+            nperseg=nfft // 2,
+            nfft=nfft,
         )
 
         ax.pcolormesh(times, freqs, spect, shading="gouraud")
@@ -33,5 +33,5 @@ if __name__ == "__main__":
     axs[-1].axis("off")
 
     fig.tight_layout()
-    plt.savefig(Path(__file__).with_suffix(".pdf"))
+    plt.savefig(Path(__file__).with_suffix(".png"))
     # plt.show()

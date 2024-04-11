@@ -27,8 +27,8 @@ if __name__ == "__main__":
             wave,
             fs=fs,
             window=("hamming"),
-            nperseg=nfft,
-            noverlap=nfft // 2,
+            nperseg=nfft // 2,
+            nfft=nfft,
         )
         sp.pcolormesh(t, f, np.log10(np.abs(sxx)), shading="gouraud")
         sp.set_title(f"STFT, $f_1={f1}$ [Hz]")
@@ -38,5 +38,5 @@ if __name__ == "__main__":
     fig.suptitle(f"$\\text{{{nfft=}}}$")
 
     fig.tight_layout()
-    plt.savefig(Path(__file__).with_suffix(".pdf"))
+    plt.savefig(Path(__file__).with_suffix(".png"))
     # plt.show()
