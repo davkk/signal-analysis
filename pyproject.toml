@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sat"
+name = "signal_analysis"
 version = "0.1.0"
 description = ""
 authors = ["davkk <dadulerk@gmail.com>"]
