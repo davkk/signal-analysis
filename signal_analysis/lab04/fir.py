@@ -21,7 +21,11 @@ order = 101
 filters = {
     "highpass": signal.firwin(order, 42 / nyq),
     "lowpass": signal.firwin(order, 38 / nyq, pass_zero=False),
-    "bandpass": signal.firwin(order, [38 / nyq, 42 / nyq], pass_zero=False),
+    "bandpass": signal.firwin(
+        order,
+        [38 / nyq, 42 / nyq],
+        pass_zero=False,
+    ),
 }
 
 if __name__ == "__main__":
@@ -57,7 +61,7 @@ if __name__ == "__main__":
         bot.legend(loc="lower right")
 
         SNR = 10 * np.log10(signaltonoise(np.abs(result)))
-        fig.suptitle(f"{filter_name} filter, {SNR=:.3f} [dB]")
+        fig.suptitle(f"{SNR=:.3f} [dB]")
         fig.tight_layout()
         plt.savefig(Path(__file__).with_suffix(f".{filter_name}.pdf"))
         # plt.show()
